@@ -12,7 +12,7 @@ The thesis-grade figures used in the simulation are shipped in this repository.
 
 ## Run the demo
 
-https://bountyhunter12.github.io/GreenFed-LoRA-Energy-Aware-Federated-Fine-Tuning-of-Large-Language-Models--pipeline/](https://faoziafariha.github.io/GreenFed-LoRA-Energy-Aware-Federated-Fine-Tuning-of-Large-Language-Modelss/
+https://faoziafariha.github.io/GreenFed-LoRA-Energy-Aware-Federated-Fine-Tuning-of-Large-Language-Modelss/
  
 ---
 ## Run the demo
