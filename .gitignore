@@ -1,0 +1,21 @@
+# Node
+node_modules/
+package-lock.json
+
+# Editor / IDE
+.puku/
+.vscode/
+.idea/
+
+# Runtime logs and transient files
+server.log
+server.err
+
+# Local helper scripts (not part of the public demo)
+_check.js
+_peek.js
+_runtime.js
+_runtime_live.js
+_convert_flora.py
+checkpoint.pkl
+llama32_1b_flora_result.pkl

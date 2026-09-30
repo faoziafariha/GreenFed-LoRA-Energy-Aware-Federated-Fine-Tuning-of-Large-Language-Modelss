@@ -1,0 +1,51 @@
+client_id,institution_id,institution_name,institution_type,region,state,num_branches,device_type,flops,battery_pct,carbon_intensity,bandwidth_mbps,style,has_label_noise,noise_rate
+0,INST-D5153B5C,"Rodriguez, Figueroa and Sanchez Regional Bank",Regional Bank,Northeast,DC,380,edge_server,4.78,78.6,459.2,32.0,aggressive,False,0.03
+1,INST-663A5C52,"Garcia, Yang and Gardner Regional Bank",Regional Bank,Northwest,OR,380,edge_server,0.76,89.3,460.7,141.9,brief,True,0.04
+2,INST-FF7FB4D6,Johnson-Davis National Bank,National Bank,Northeast,IN,112,edge_server,4.86,86.6,227.4,37.2,casual,False,0.02
+3,INST-4606AB05,"Guzman, Hoffman and Baldwin Finance",Online Lender,Northwest,UT,333,edge_server,1.87,62.0,359.2,59.0,brief,False,0.04
+4,INST-F0657D16,"Barnes, Cole and Ramirez Mortgage Services",Mortgage Servicer,Northeast,VI,389,mobile,1.13,43.4,319.8,91.8,casual,False,0.03
+5,INST-5BAA4F7C,Blake and Sons Credit Union,Credit Union,Southeast,UT,491,mobile,1.4,61.1,455.4,10.2,aggressive,True,0.04
+6,INST-6D452204,Peterson-Moore Recovery Services,Debt Collector,Midwest,WV,310,mobile,1.27,25.2,669.3,193.2,aggressive,False,0.05
+7,INST-90649CE6,Garcia-James Regional Bank,Regional Bank,Southwest,MI,41,mobile,1.87,27.8,510.5,88.6,brief,False,0.05
+8,INST-1002E7BA,Munoz-Roman Recovery Services,Debt Collector,West,VA,99,edge_server,2.73,22.8,645.6,52.5,formal,True,0.03
+9,INST-900C58D2,Herrera-Dudley Mortgage Services,Mortgage Servicer,Northeast,MS,438,mobile,1.9,61.6,428.0,37.8,casual,False,0.04
+10,INST-32E1BF7A,Arnold Ltd Insurance,Insurance Company,Northwest,RI,428,iot,3.99,95.2,636.9,120.0,aggressive,False,0.03
+11,INST-E392EC04,Ray-Bush Mortgage Services,Mortgage Servicer,Northwest,AZ,480,iot,0.9,35.7,127.1,65.7,formal,False,0.03
+12,INST-EDA0CA9A,"Perez, Roberts and Miller Finance",Online Lender,Southeast,IN,237,edge_server,1.72,86.3,314.1,56.9,technical,False,0.06
+13,INST-7E9B2533,James Group Finance,Online Lender,Northwest,SC,167,mobile,1.13,84.2,144.7,197.4,formal,False,0.02
+14,INST-83FAEAF4,Martin-Kelly Recovery Services,Debt Collector,Southwest,TN,138,mobile,1.39,20.4,589.3,141.7,formal,False,0.06
+15,INST-1E96B6A7,Miles-Sutton Recovery Services,Debt Collector,Southeast,CA,336,mobile,3.97,25.9,315.1,24.1,technical,False,0.06
+16,INST-88AE7598,"Reid, Ferguson and Sanchez Insurance",Insurance Company,Southeast,NH,136,iot,3.3,46.5,138.1,62.9,casual,False,0.04
+17,INST-07EAA0A5,Nelson-Schaefer Mortgage Services,Mortgage Servicer,Northwest,UT,300,edge_server,3.78,71.0,632.3,95.0,technical,False,0.04
+18,INST-BC84531A,"Robinson, Nguyen and Tate Finance",Online Lender,Southeast,AR,261,edge_server,3.71,80.9,436.8,154.4,technical,True,0.02
+19,INST-678CA827,Underwood LLC Regional Bank,Regional Bank,Southeast,MO,322,mobile,2.85,54.2,115.3,22.5,casual,False,0.04
+20,INST-E3F1F83C,Jones-Gentry Regional Bank,Regional Bank,Southwest,OK,196,edge_server,3.36,45.1,405.1,181.6,brief,False,0.04
+21,INST-3D68500B,"Edwards, Rios and Foster National Bank",National Bank,Northwest,PW,370,edge_server,2.35,80.4,237.3,16.3,formal,False,0.04
+22,INST-EE3B427E,"Ellis, Baker and Wright Mortgage Services",Mortgage Servicer,Northwest,OH,175,edge_server,1.23,94.4,584.9,127.0,formal,False,0.03
+23,INST-CEC24D26,"Baker, Richards and Hurst National Bank",National Bank,Northwest,MO,449,iot,4.12,34.9,635.5,108.3,aggressive,False,0.05
+24,INST-878874ED,Robinson-Bright Regional Bank,Regional Bank,Northwest,NY,153,mobile,4.53,45.4,166.0,46.4,brief,False,0.03
+25,INST-350C605B,Davis-Williams Credit Union,Credit Union,West,DE,489,edge_server,4.18,88.9,104.2,102.6,brief,False,0.04
+26,INST-8067F1BF,Burton Ltd Insurance,Insurance Company,Northeast,NE,58,edge_server,1.5,29.6,302.6,188.6,aggressive,False,0.05
+27,INST-C708B4B3,"Brown, James and Ferrell Mortgage Services",Mortgage Servicer,Southeast,NC,30,edge_server,2.83,76.2,318.2,194.4,casual,False,0.06
+28,INST-7902E516,Maddox-Valencia Regional Bank,Regional Bank,Northwest,AL,249,iot,1.63,59.8,280.5,57.7,formal,False,0.04
+29,INST-D52FFD37,"Le, Maldonado and Herrera Credit Union",Credit Union,Southeast,KY,338,edge_server,3.24,60.2,130.9,56.5,technical,False,0.03
+30,INST-F8909683,"Peterson, Carter and Moore Digital Finance",FinTech App,Southeast,AL,476,iot,1.58,31.6,393.7,197.1,brief,False,0.05
+31,INST-2F60226C,"Liu, Baker and Mason Mortgage Services",Mortgage Servicer,Southwest,HI,344,edge_server,3.52,80.9,242.6,145.9,aggressive,False,0.04
+32,INST-CB39BAD5,"Gaines, Harrell and Evans Regional Bank",Regional Bank,Southeast,SC,116,edge_server,3.35,70.7,421.5,19.0,formal,False,0.04
+33,INST-0022B275,"Lynch, Hernandez and Farmer Finance",Online Lender,West,ND,113,mobile,1.94,34.9,124.5,118.6,formal,True,0.05
+34,INST-30EBA206,"Sellers, George and Burns Finance",Online Lender,Northeast,DE,464,mobile,0.57,61.0,235.9,129.4,formal,False,0.02
+35,INST-FE443B19,Koch-Decker Finance,Online Lender,Midwest,ME,343,edge_server,3.61,50.9,662.0,28.4,technical,False,0.03
+36,INST-2AC90F76,Brown PLC Insurance,Insurance Company,Southeast,CO,402,edge_server,1.01,94.0,626.4,52.3,technical,False,0.03
+37,INST-5940010C,Dennis Inc Regional Bank,Regional Bank,Northwest,WV,221,mobile,4.18,64.4,417.8,49.1,aggressive,False,0.04
+38,INST-671B3782,"Cannon, Anderson and Alvarez National Bank",National Bank,Northwest,OH,335,edge_server,4.54,92.0,479.9,68.5,formal,True,0.05
+39,INST-33B39D57,Baker PLC Regional Bank,Regional Bank,Southeast,NE,99,edge_server,3.77,91.8,632.3,156.2,casual,False,0.03
+40,INST-547C13C3,Hickman Ltd Credit Union,Credit Union,Midwest,UT,237,mobile,0.88,32.9,639.1,121.7,casual,False,0.02
+41,INST-573061D1,Marquez Group Regional Bank,Regional Bank,Northeast,TN,334,edge_server,0.96,73.1,103.0,33.0,brief,False,0.06
+42,INST-670DFFED,"Brooks, Lam and Hayes Finance",Online Lender,Southeast,IA,209,mobile,3.61,72.2,234.6,142.7,technical,False,0.05
+43,INST-7E2057A3,Brown Inc National Bank,National Bank,Southeast,OR,195,edge_server,1.96,79.7,489.8,170.0,formal,False,0.03
+44,INST-C66CE7C0,"Hall, Robinson and Jones Insurance",Insurance Company,Midwest,SC,217,mobile,3.06,27.5,320.6,53.8,brief,False,0.04
+45,INST-1793A0A0,Perez Inc Finance,Online Lender,Midwest,VI,112,edge_server,4.88,51.4,635.2,126.6,formal,False,0.04
+46,INST-52F75873,Jones-Young Recovery Services,Debt Collector,Northeast,TN,26,mobile,2.76,66.2,395.5,39.9,brief,False,0.06
+47,INST-A05BB415,Lewis-Anderson Credit Union,Credit Union,Northeast,FM,492,mobile,1.76,21.9,487.3,36.2,brief,True,0.03
+48,INST-084BD9A7,"Johnston, Sanchez and Kennedy Regional Bank",Regional Bank,Northwest,MT,442,iot,4.79,93.2,322.1,4.1,casual,False,0.06
+49,INST-C5586F43,Davis Ltd Finance,Online Lender,West,NE,305,iot,2.43,97.3,678.2,170.7,formal,False,0.04

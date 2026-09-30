@@ -1,0 +1,41 @@
+[
+  {
+    "client_id": 25,
+    "round": 5,
+    "utility_score": 0.8849649027841896,
+    "adjusted_utility": 0.8649649027841896,
+    "carbon_intensity": 104.2,
+    "battery_pct": 78.702530809,
+    "num_samples": 500,
+    "file_int8": "client_25_adapter_int8.bin",
+    "file_float32": "client_25_adapter_f32.pt",
+    "int8_size_kb": 2268.67,
+    "float32_size_kb": 8590.14
+  },
+  {
+    "client_id": 42,
+    "round": 5,
+    "utility_score": 0.6858979231726658,
+    "adjusted_utility": 0.6808979231726658,
+    "carbon_intensity": 234.6,
+    "battery_pct": 70.034,
+    "num_samples": 500,
+    "file_int8": "client_42_adapter_int8.bin",
+    "file_float32": "client_42_adapter_f32.pt",
+    "int8_size_kb": 2268.67,
+    "float32_size_kb": 8590.14
+  },
+  {
+    "client_id": 31,
+    "round": 5,
+    "utility_score": 0.7265637624862146,
+    "adjusted_utility": 0.7065637624862146,
+    "carbon_intensity": 242.6,
+    "battery_pct": 71.62018832899999,
+    "num_samples": 500,
+    "file_int8": "client_31_adapter_int8.bin",
+    "file_float32": "client_31_adapter_f32.pt",
+    "int8_size_kb": 2268.67,
+    "float32_size_kb": 8590.14
+  }
+]

@@ -1,0 +1,345 @@
+<!doctype html>
+<!--
+  SETUP — place these files in the same folder as index.html:
+    results_optionC.csv
+    client_stats.csv
+    institution_profiles.csv
+    flora_result.json          (converted from the .pkl, see script)
+    sample_generations.json
+    sample_client_weights/manifest.json
+    sample_client_weights/client_XX_adapter_int8.bin (x3)
+    sample_client_weights/client_XX_adapter_f32.pt   (x3)
+    thesis_fig1_convergence.png
+    llama32_1b_sustainability.png
+    thesis_fig3_heatmap.png
+    thesis_fig4_client_analysis.png
+    thesis_fig5_lora_privacy.png
+  Open index.html directly, or run `python -m http.server` and visit
+  localhost:8000.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GreenFed-LoRA — End-to-End Pipeline Simulator</title>
+<link rel="stylesheet" href="vendor/katex/katex.min.css" />
+<script defer src="vendor/papaparse.min.js"></script>
+<script defer src="vendor/chart.umd.js"></script>
+<script defer src="vendor/katex/katex.min.js"></script>
+<script defer src="vendor/katex/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo-dot"></span>
+    <div>
+      <h1>GreenFed-LoRA</h1>
+      <p class="subtitle">End-to-End Federated Fine-Tuning Pipeline Simulator</p>
+    </div>
+  </div>
+  <div class="topbar-meta">
+    <span class="badge badge-live" id="dataStatusBadge">Loading…</span>
+    <span class="muted">Llama-3.2-1B · ffn_only · LoRA r=8</span>
+  </div>
+</header>
+
+<div id="fallbackBanner" class="fallback-banner hidden">
+  <strong>⚠ Showing demo data</strong> — add the files listed at the top of <code>index.html</code> to load real results.
+  <span id="fallbackDetail"></span>
+</div>
+
+<section class="controls">
+  <div class="control">
+    <label for="modelSelect">Model</label>
+    <select id="modelSelect"></select>
+  </div>
+  <div class="control">
+    <label>Strategy</label>
+    <div class="seg" role="tablist" id="strategySeg">
+      <button data-strategy="flora"  class="seg-btn active">FLoRA</button>
+      <button data-strategy="fedavg" class="seg-btn">FedAvg</button>
+      <button data-strategy="all"    class="seg-btn">All (random)</button>
+    </div>
+  </div>
+  <div class="control">
+    <label for="roundSelect">Round</label>
+    <select id="roundSelect">
+      <option value="1">Round 1</option>
+      <option value="2">Round 2</option>
+      <option value="3">Round 3</option>
+      <option value="4">Round 4</option>
+      <option value="5">Round 5</option>
+    </select>
+  </div>
+  <div class="control control-actions">
+    <button id="prevBtn" class="btn ghost">◀ Prev</button>
+    <button id="autoplayBtn" class="btn ghost">▶ Autoplay</button>
+    <button id="nextBtn" class="btn primary">Next ▶</button>
+  </div>
+</section>
+
+<nav class="stepper" id="stepper" aria-label="Pipeline steps"></nav>
+
+<main id="stepContainer">
+
+  <!-- STEP 0 -->
+  <section class="step" data-step="0">
+    <header class="step-head">
+      <span class="step-num">0</span>
+      <div>
+        <h2>Input — Select a Complaint</h2>
+        <p class="step-sub">Pick a real consumer complaint from the CFPB dataset. This example will follow the entire pipeline as the tracer.</p>
+      </div>
+    </header>
+    <div class="input-card">
+      <div class="input-card-head">
+        <span class="chip">Client-local input</span>
+      </div>
+      <blockquote id="complaintText" class="complaint-text">—</blockquote>
+      <p class="caption">This text is what one client institution holds locally — it never leaves their device.</p>
+      <p class="muted small" id="complaintMeta"></p>
+      <details class="thesis-fig">
+        <summary>Pick a different example (30 real complaints)</summary>
+        <label for="complaintSelect" class="lbl">Complaint (30 real examples)</label>
+        <select id="complaintSelect" size="8"></select>
+      </details>
+    </div>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="step" data-step="1">
+    <header class="step-head">
+      <span class="step-num">1</span>
+      <div>
+        <h2>Client Selection</h2>
+        <p class="step-sub">The server picks 10 of 50 simulated institutions for this round.</p>
+      </div>
+    </header>
+    <div class="formula-card">
+      <div class="formula" id="utilityFormula">U = 0.5·H + 0.3·(FLOPs/5) + 0.2·(Battery/Carbon)</div>
+      <p class="caption">Utility score (FLoRA / FedAvg). The <strong>"all"</strong> strategy skips scoring and picks 10 at random — see select_clients() in the source pipeline.</p>
+    </div>
+    <div id="clientGrid" class="client-grid"></div>
+    <h3 class="section-h">Selected this round</h3>
+    <div class="table-wrap"><table class="data-table" id="selectedTable"></table></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="step" data-step="2">
+    <header class="step-head">
+      <span class="step-num">2</span>
+      <div>
+        <h2>Local Training</h2>
+        <p class="step-sub">Each selected client fine-tunes locally on its own data.</p>
+      </div>
+    </header>
+    <div class="config-card">
+      <span class="chip">100 steps</span>
+      <span class="chip">batch 8 × grad-accum 4 (eff. batch 32)</span>
+      <span class="chip">LoRA r=8 on gate/up/down_proj</span>
+      <span class="chip">cosine LR</span>
+      <span class="chip">AdamW-8bit</span>
+    </div>
+    <div class="device-row" id="deviceRow"></div>
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-label">Energy this round</div>
+        <div class="metric-value"><span id="energyRound">0.000</span> <span class="metric-unit">kWh</span></div>
+        <div class="metric-sub" id="energyRoundSub">approximate even split shown below</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">CO₂ this round</div>
+        <div class="metric-value"><span id="co2Round">0.00</span> <span class="metric-unit">g</span></div>
+        <div class="metric-sub">CodeCarbon RAPL/NVML sampling</div>
+      </div>
+    </div>
+    <div class="chart-stage chart-stage--short"><canvas id="energySplitChart"></canvas></div>
+    <p class="caption">Approximate even split of round total across the 10 clients (illustrative). Exact per-client energy is logged internally via CodeCarbon.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="step" data-step="3">
+    <header class="step-head">
+      <span class="step-num">3</span>
+      <div>
+        <h2>Int-8 Compression</h2>
+        <p class="step-sub">Adapters are quantized before upload. Sizes come straight from <code>sample_client_weights/manifest.json</code>.</p>
+      </div>
+    </header>
+    <div id="compressionCards" class="compression-row"></div>
+    <p class="caption">Quantization: <code>scale = max(|w|)/127</code>, applied per-tensor before upload; dequantized server-side before aggregation.</p>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="step" data-step="4">
+    <header class="step-head">
+      <span class="step-num">4</span>
+      <div>
+        <h2>Aggregation</h2>
+        <p class="step-sub" id="aggSubtitle">FLoRA's stack-and-SVD method is mathematically required for LoRA's bilinear parameterization.</p>
+      </div>
+    </header>
+    <div class="agg-canvas" id="aggCanvas">
+      <div class="agg-incoming" id="aggIncoming"></div>
+      <div class="agg-arrow">▶</div>
+      <div class="agg-server" id="aggServer">Σ</div>
+    </div>
+    <ol class="agg-steps" id="aggSteps"></ol>
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-label">Comm cost (this round)</div>
+        <div class="metric-value"><span id="commRound">0.00</span> <span class="metric-unit">MB</span></div>
+        <div class="metric-sub">Total quantized payload received by server this round.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="step" data-step="5">
+    <header class="step-head">
+      <span class="step-num">5</span>
+      <div>
+        <h2>Carbon Tracking</h2>
+        <p class="step-sub">Running cumulative footprint across the 5 rounds.</p>
+      </div>
+    </header>
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-label">Cumulative CO₂</div>
+        <div class="metric-value"><span id="cumCO2">0.00</span> <span class="metric-unit">g</span></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Cumulative energy</div>
+        <div class="metric-value"><span id="cumEnergy">0.000</span> <span class="metric-unit">kWh</span></div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box"><h4 class="chart-h">CO₂ by round</h4><div class="chart-stage"><canvas id="co2Chart"></canvas></div></div>
+      <div class="chart-box"><h4 class="chart-h">Energy by round</h4><div class="chart-stage"><canvas id="energyChart"></canvas></div></div>
+    </div>
+    <details class="thesis-fig">
+      <summary>View full sustainability analysis (thesis figure)</summary>
+      <img id="figSustainability" alt="Sustainability analysis" />
+    </details>
+    <p class="caption">Energy and CO₂ are measured per-round via CodeCarbon (RAPL/NVML power sampling), not estimated — these are the same numbers reported in the thesis.</p>
+  </section>
+
+  <!-- STEP 6 -->
+  <section class="step" data-step="6">
+    <header class="step-head">
+      <span class="step-num">6</span>
+      <div>
+        <h2>Evaluation</h2>
+        <p class="step-sub">ROUGE-L and BERTScore-F1 for the current round, plus the full 5-round trajectory.</p>
+      </div>
+    </header>
+    <div class="metric-row">
+      <div class="metric-card gauge-card">
+        <div class="metric-label">ROUGE-L (round <span id="evalRoundLbl">1</span>)</div>
+        <div class="metric-value big"><span id="rougeL">0.000</span></div>
+        <div class="gauge"><div class="gauge-fill" id="rougeGauge"></div></div>
+      </div>
+      <div class="metric-card gauge-card">
+        <div class="metric-label">BERTScore-F1</div>
+        <div class="metric-value big"><span id="bertScore">0.000</span></div>
+        <div class="gauge"><div class="gauge-fill" id="bertGauge"></div></div>
+      </div>
+    </div>
+    <h4 class="chart-h">5-round trajectory (current strategy)</h4>
+    <div class="chart-stage chart-stage--tall"><canvas id="evalChart"></canvas></div>
+    <details class="thesis-fig">
+      <summary>View thesis convergence figure</summary>
+      <img id="figConvergence" alt="Convergence figure" />
+    </details>
+    <p class="caption">Evaluated on 60 held-out structured explanations per round (separate from the 30 showcase examples in Step 7).</p>
+  </section>
+
+  <!-- STEP 7 -->
+  <section class="step" data-step="7">
+    <header class="step-head">
+      <span class="step-num">7</span>
+      <div>
+        <h2>Final Output</h2>
+        <p class="step-sub">The complaint from Step 0, the prompt that was sent, and the model's actual generation.</p>
+      </div>
+    </header>
+    <div class="output-grid">
+      <div class="prompt-card">
+        <div class="card-h">Prompt sent to model</div>
+        <pre id="promptBlock" class="code-block">—</pre>
+        <div class="muted small" id="promptMeta"></div>
+      </div>
+      <div class="gen-card">
+        <div class="card-h">Model's generated output</div>
+        <div id="genParsed"></div>
+        <div class="ref-block">
+          <div class="ref-label">Reference (ground truth)</div>
+          <div id="refText" class="muted">—</div>
+        </div>
+        <div class="badge-row">
+          <span class="badge soft">ROUGE-L <strong id="exRouge">—</strong></span>
+          <span class="badge soft">BERTScore <strong id="exBert">—</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="section-h">Final results — all 3 strategies</h3>
+    <div class="table-wrap"><table class="data-table" id="finalResultsTable"></table></div>
+    <div class="callout">
+      <strong>The real tradeoff:</strong>
+      FedAvg achieved the highest composite score (0.7304) but also the highest CO₂ (325.7g).
+      The "all" (random selection) strategy had the lowest CO₂ (267.3g) and lowest energy,
+      trading off ~1 point of composite score. FLoRA balances between the two.
+      This is a more honest finding than declaring one strategy strictly best.
+    </div>
+    <button id="rerunBtn" class="btn primary">↻ Run another example</button>
+  </section>
+
+</main>
+
+<section class="about">
+  <h2>About this model</h2>
+  <div class="about-grid">
+    <div class="card">
+      <h3>Current run</h3>
+      <ul class="kv">
+        <li><span>Model</span><strong>Llama-3.2-1B-Instruct</strong></li>
+        <li><span>Fine-tuning</span><strong>ffn_only LoRA (r=8, α=16)</strong></li>
+        <li><span>LoRA targets</span><strong>gate_proj, up_proj, down_proj</strong></li>
+        <li><span>Clients</span><strong>50 simulated institutions</strong></li>
+        <li><span>Rounds</span><strong>5 federated rounds</strong></li>
+        <li><span>Dataset</span><strong>CFPB consumer complaints (6 classes)</strong></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Other models in the registry (not yet run)</h3>
+      <div class="table-wrap"><table class="data-table small" id="registryTable"></table></div>
+      <p class="caption">Defined in the same pipeline for future comparative runs — not run for this thesis submission.</p>
+    </div>
+  </div>
+  <div class="fig-grid">
+    <figure>
+      <div class="fig-frame fig-frame--wide"><img id="figPrivacy" alt="LoRA compression and privacy" /></div>
+      <figcaption>thesis_fig5 — LoRA compression & privacy boundary.</figcaption>
+    </figure>
+    <figure>
+      <div class="fig-frame"><img id="figClientAnalysis" alt="Client analysis" /></div>
+      <figcaption>thesis_fig4 — client analysis (see Step 1 for the interactive version).</figcaption>
+    </figure>
+  </div>
+</section>
+
+<footer class="pagefoot">
+  <span>GreenFed-LoRA · Pipeline simulator · built from real artifacts in this folder.</span>
+</footer>
+
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <p>Loading data files…</p>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
